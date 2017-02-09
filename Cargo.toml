@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Ross Hadden <rosshadden@gmail.com>"]
 
 [dependencies]
+js = { git = "https://github.com/servo/rust-mozjs" }
