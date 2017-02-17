@@ -7,13 +7,14 @@ const
   windowFlags = 0
   rendererFlags = sdl.RendererAccelerated or sdl.RendererPresentVsync
 
-type IInit = concept game
+type IGameInit = concept game
   init(game)
-type IUpdate = concept game
+type IGameUpdate = concept game
   update(game)
-type IRender = concept game
+type IGameRender = concept game
   render(game)
-type Game = IInit or IUpdate or IRender
+type IGame = IGameInit and IGameUpdate and IGameRender
+type Game = IGame
 
 type
   App = ref AppObj
@@ -41,34 +42,36 @@ proc init(app: App): bool =
   app.renderer = sdl.createRenderer(app.window, -1, rendererFlags)
   sdlFailIf app.renderer == nil: "Failed to create renderer"
 
-  sdlFailIf app.renderer.setRenderDrawColor(0xff, 0xff, 0xff, 0xff) != 0:
-    "Failed to set draw color"
-
-  echo "SDL initialized successfully."
   return true
 
 proc exit(app: App) =
   app.renderer.destroyRenderer()
   app.window.destroyWindow()
   sdl.quit()
-  echo "SDL shutdown completed."
 
 proc run*[Game]() =
   var game: Game = Game()
   var app = App(window: nil, renderer: nil)
 
   if init(app):
-    sdlFailIf app.renderer.renderClear() != 0: "Failed to clear screen"
-    app.renderer.renderPresent()
     game.init()
+
+    while true:
+      game.update()
+
+      sdlFailIf app.renderer.setRenderDrawColor(0x00, 0x00, 0x00, 0xff) != 0: "Failed to set draw color"
+      sdlFailIf app.renderer.renderClear() != 0: "Failed to clear screen"
+
+      game.render()
+      app.renderer.renderPresent()
 
   exit(app)
 
 when isMainModule:
   type MyGame = ref object
 
-  proc init(this: MyGame) = echo "init!"
-  proc update(this: MyGame) = echo "update!"
-  proc render(this: MyGame) = echo "render!"
+  proc init(this: MyGame) = discard
+  proc update(this: MyGame) = discard
+  proc render(this: MyGame) = discard
 
   run[MyGame]()
