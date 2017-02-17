@@ -7,6 +7,11 @@ const
   windowFlags = 0
   rendererFlags = sdl.RendererAccelerated or sdl.RendererPresentVsync
 
+type Game* = object
+  init: proc (): void
+  update: proc(): void
+  render: proc(): void
+
 type
   App = ref AppObj
   AppObj = object
@@ -45,7 +50,7 @@ proc exit(app: App) =
   sdl.quit()
   echo "SDL shutdown completed."
 
-proc main() =
+proc main(game: Game) =
   var app = App(window: nil, renderer: nil)
 
   if init(app):
@@ -53,8 +58,17 @@ proc main() =
 
     app.renderer.renderPresent()
 
+    game.init()
     sdl.delay(1000)
 
   exit(app)
 
-main()
+proc run*(game: Game) =
+  main(game)
+
+when isMainModule:
+  var game: Game
+
+  proc init(game: Game) =
+    echo "init!"
+  main(game)
