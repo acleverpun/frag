@@ -13,7 +13,7 @@ type IUpdate = concept game
   update(game)
 type IRender = concept game
   render(game)
-type Game = IInit or IUpdate
+type Game = IInit or IUpdate or IRender
 
 type
   App = ref AppObj
@@ -23,10 +23,10 @@ type
 
 type SdlEx = object of Exception
 template sdlFailIf(cond: typed, err: string) =
-  if cond: raise SdlEx.newException(err & ", SDL error: " & $sdl.getError())
+  if cond: raise SdlEx.newException(err & ", [SDL] error: " & $sdl.getError())
 
 proc init(app: App): bool =
-  sdlFailIf sdl.init(sdl.InitVideo) != 0: "Can't initialize SDL"
+  sdlFailIf sdl.init(sdl.InitVideo) != 0: "Failed to initialize SDL"
 
   app.window = sdl.createWindow(
     title,
@@ -36,13 +36,13 @@ proc init(app: App): bool =
     height,
     windowFlags
   )
-  sdlFailIf app.window == nil: "Can't create window"
+  sdlFailIf app.window == nil: "Failed to create window"
 
   app.renderer = sdl.createRenderer(app.window, -1, rendererFlags)
-  sdlFailIf app.renderer == nil: "Can't create renderer"
+  sdlFailIf app.renderer == nil: "Failed to create renderer"
 
   sdlFailIf app.renderer.setRenderDrawColor(0xff, 0xff, 0xff, 0xff) != 0:
-    "Can't set draw color"
+    "Failed to set draw color"
 
   echo "SDL initialized successfully."
   return true
@@ -53,27 +53,22 @@ proc exit(app: App) =
   sdl.quit()
   echo "SDL shutdown completed."
 
-proc main(game: Game) =
+proc run*[Game]() =
+  var game: Game = Game()
   var app = App(window: nil, renderer: nil)
 
   if init(app):
-    sdlFailIf app.renderer.renderClear() != 0: "Can't clear screen"
-
+    sdlFailIf app.renderer.renderClear() != 0: "Failed to clear screen"
     app.renderer.renderPresent()
-
     game.init()
 
   exit(app)
 
-proc run*(game: Game) = main(game)
-
 when isMainModule:
-  type MyGame = object
+  type MyGame = ref object
 
   proc init(this: MyGame) = echo "init!"
   proc update(this: MyGame) = echo "update!"
   proc render(this: MyGame) = echo "render!"
 
-  var game: MyGame
-
-  main(game)
+  run[MyGame]()
