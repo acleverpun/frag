@@ -7,15 +7,15 @@ const
   windowFlags = 0
   rendererFlags = sdl.RendererAccelerated or sdl.RendererPresentVsync
 
-type IGame = concept game
-  init(game) or update(game) or render(game)
-type Game = IGame
-
 type
   App = ref AppObj
   AppObj = object
     window*: sdl.Window
     renderer*: sdl.Renderer
+
+type Game* = ref object of RootObj
+  app: App
+  isRunning: bool
 
 type SdlEx = object of Exception
 template sdlFailIf(cond: typed, err: string) =
@@ -39,19 +39,22 @@ proc init(app: App): bool =
 
   return true
 
-proc exit(app: App) =
-  app.renderer.destroyRenderer()
-  app.window.destroyWindow()
+proc exit*(game: Game) =
+  game.app.renderer.destroyRenderer()
+  game.app.window.destroyWindow()
   sdl.quit()
+  system.quit()
 
 proc run*[Game]() =
-  var game: Game = Game()
+  var game: Game = Game(app: nil)
   var app = App(window: nil, renderer: nil)
+  game.app = app
+  game.isRunning = true
 
   if init(app):
     when compiles(game.init): game.init()
 
-    while true:
+    while game.isRunning == true:
       when compiles(game.update): game.update()
 
       sdlFailIf app.renderer.setRenderDrawColor(0x00, 0x00, 0x00, 0xff) != 0: "Failed to set draw color"
@@ -60,13 +63,18 @@ proc run*[Game]() =
       when compiles(game.render): game.render()
       app.renderer.renderPresent()
 
-  exit(app)
+  game.exit()
 
 when isMainModule:
-  type MyGame = ref object
+  type MyGame = ref object of Game
 
   proc init(this: MyGame) = discard
-  proc update(this: MyGame) = discard
+
+  var i = 0
+  proc update(this: MyGame) =
+    inc(i)
+    if i == 50: this.exit()
+
   proc render(this: MyGame) = discard
 
   run[MyGame]()
