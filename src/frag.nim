@@ -7,13 +7,8 @@ const
   windowFlags = 0
   rendererFlags = sdl.RendererAccelerated or sdl.RendererPresentVsync
 
-type IGameInit = concept game
-  init(game)
-type IGameUpdate = concept game
-  update(game)
-type IGameRender = concept game
-  render(game)
-type IGame = IGameInit and IGameUpdate and IGameRender
+type IGame = concept game
+  init(game) or update(game) or render(game)
 type Game = IGame
 
 type
@@ -54,15 +49,15 @@ proc run*[Game]() =
   var app = App(window: nil, renderer: nil)
 
   if init(app):
-    game.init()
+    when compiles(game.init): game.init()
 
     while true:
-      game.update()
+      when compiles(game.update): game.update()
 
       sdlFailIf app.renderer.setRenderDrawColor(0x00, 0x00, 0x00, 0xff) != 0: "Failed to set draw color"
       sdlFailIf app.renderer.renderClear() != 0: "Failed to clear screen"
 
-      game.render()
+      when compiles(game.render): game.render()
       app.renderer.renderPresent()
 
   exit(app)
