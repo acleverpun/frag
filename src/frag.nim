@@ -7,10 +7,13 @@ const
   windowFlags = 0
   rendererFlags = sdl.RendererAccelerated or sdl.RendererPresentVsync
 
-type Game* = object
-  init: proc (): void
-  update: proc(): void
-  render: proc(): void
+type IInit = concept game
+  init(game)
+type IUpdate = concept game
+  update(game)
+type IRender = concept game
+  render(game)
+type Game = IInit or IUpdate
 
 type
   App = ref AppObj
@@ -59,16 +62,18 @@ proc main(game: Game) =
     app.renderer.renderPresent()
 
     game.init()
-    sdl.delay(1000)
 
   exit(app)
 
-proc run*(game: Game) =
-  main(game)
+proc run*(game: Game) = main(game)
 
 when isMainModule:
-  var game: Game
+  type MyGame = object
 
-  proc init(game: Game) =
-    echo "init!"
+  proc init(this: MyGame) = echo "init!"
+  proc update(this: MyGame) = echo "update!"
+  proc render(this: MyGame) = echo "render!"
+
+  var game: MyGame
+
   main(game)
