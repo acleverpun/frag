@@ -1,20 +1,17 @@
-import colors
 import basic2d
 import game
-import sdl2/sdl except Color
+import sdl2/sdl
 
-proc setColor(game: Game, color: Color, alpha: uint8 = 0xff) =
-  var rgb = color.extractRGB()
-  discard game.renderer.setRenderDrawColor(rgb.r, rgb.g, rgb.b, alpha)
+proc color*(r, g, b: uint8 = 0, a: uint8 = 0xff): Color = Color(r: r, g: g, b: b, a: a)
 
-proc drawPoint*(game: Game, pos: Vector2d, color: Color, alpha: uint8 = 0xff) =
-  setColor(game, color, alpha)
+proc drawPoint*(game: Game, pos: Vector2d, color: Color) =
+  discard game.renderer.setRenderDrawColor(color)
   discard game.renderer.renderDrawPoint(pos.x.int, pos.y.int)
 
-proc drawRect*(game: Game, rect: ptr Rect, color: Color, alpha: uint8 = 0xff) =
-  setColor(game, color, alpha)
+proc drawRect*(game: Game, rect: ptr Rect, color: Color) =
+  discard game.renderer.setRenderDrawColor(color)
   discard game.renderer.renderDrawRect(rect)
 
-proc fillRect*(game: Game, rect: ptr Rect, color: Color, alpha: uint8 = 0xff) =
-  setColor(game, color, alpha)
+proc fillRect*(game: Game, rect: ptr Rect, color: Color) =
+  discard game.renderer.setRenderDrawColor(color)
   discard game.renderer.renderFillRect(rect)
