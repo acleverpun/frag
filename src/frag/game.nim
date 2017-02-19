@@ -12,27 +12,31 @@ type SdlEx = object of Exception
 template sdlFailIf(cond: typed, err: string) =
   if cond: raise SdlEx.newException(err & ", [SDL] error: " & $sdl.getError())
 
-const
-  title = "FRAG"
-  width = 640
-  height = 480
-  windowFlags = 0
-  rendererFlags = sdl.RendererAccelerated or sdl.RendererPresentVsync
+type Config* = tuple[
+  title: string,
+  width: int,
+  height: int,
+  # pos: tuple[ x, y: int ],
+  windowFlags: int,
+  rendererFlags: int
+]
 
-proc setupSdl(this: Game): bool =
+proc setupSdl(this: Game, config: Config): bool =
   sdlFailIf sdl.init(sdl.InitVideo) != 0: "Failed to initialize SDL"
 
   this.window = sdl.createWindow(
-    title,
+    config.title,
+    # config.pos.x or sdl.WindowPosUndefined,
+    # config.pos.y or sdl.WindowPosUndefined,
     sdl.WindowPosUndefined,
     sdl.WindowPosUndefined,
-    width,
-    height,
-    windowFlags
+    config.width,
+    config.height,
+    uint32(config.windowFlags)
   )
   sdlFailIf this.window == nil: "Failed to create window"
 
-  this.renderer = sdl.createRenderer(this.window, -1, rendererFlags)
+  this.renderer = sdl.createRenderer(this.window, -1, uint32(config.rendererFlags))
   sdlFailIf this.renderer == nil: "Failed to create renderer"
 
   return true
@@ -56,8 +60,8 @@ proc quit*(this: Game) =
   sdl.quit()
   system.quit()
 
-proc run*(this: Game) =
-  if this.setupSdl():
+proc run*(this: Game, config: Config) =
+  if this.setupSdl(config):
     this.init()
     this.start()
 
