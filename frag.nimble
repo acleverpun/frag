@@ -7,7 +7,7 @@ license = "MIT"
 
 # Settings
 
-srcDir = "src"
+srcDir = "lib"
 skipDirs = @[ "examples" ]
 
 # Dependencies

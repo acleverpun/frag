@@ -1,4 +1,4 @@
-import ../../src/frag
+import ../../lib/frag
 import basic2d
 import sdl2/sdl
 import ./cfg.nims

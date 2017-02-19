@@ -1,5 +1,5 @@
 from sdl2/sdl import RendererAccelerated, RendererPresentVsync
-import ../../src/frag/game
+import ../../lib/frag/game
 
 var config*: Config = (
   title: "FRAG",
