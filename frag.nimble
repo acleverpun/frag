@@ -5,7 +5,10 @@ author = "Ross Hadden"
 description = "A framework for rather awesome games."
 license = "MIT"
 
+# Settings
+
 srcDir = "src"
+skipDirs = @[ "examples" ]
 
 # Dependencies
 
