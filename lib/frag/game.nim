@@ -29,6 +29,8 @@ proc setupSdl(this: Game, cfg: Config): bool =
   this.renderer = sdl.createRenderer(this.window, -1, uint32(cfg.rendererFlags))
   sdlFailIf this.renderer == nil: "Failed to create renderer"
 
+  discard this.renderer.setRenderDrawBlendMode(sdl.BlendModeBlend)
+
   return true
 
 proc start*(this: Game) =
