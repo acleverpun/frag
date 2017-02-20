@@ -1,6 +1,5 @@
 import ../../lib/frag
 import basic2d
-import sdl2/sdl
 import ./settings.nims
 
 type Game = ref object of frag.Game
@@ -11,7 +10,7 @@ type
     color: Color
     pos: Vector2d
 
-proc getBounds(this: Player): Rect = Rect(x: this.pos.x.int, y: this.pos.y.int, w: this.width.int, h: this.height.int)
+proc getBounds(this: Player): Rect = Rect(x: this.pos.x.cint, y: this.pos.y.cint, w: this.width.cint, h: this.height.cint)
 
 var p1, p2: Player
 var rect1, rect2: Rect

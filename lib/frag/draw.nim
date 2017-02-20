@@ -2,6 +2,8 @@ import basic2d
 import game
 import sdl2/sdl
 
+export Color
+
 proc color*(r, g, b: uint8 = 0, a: uint8 = 0xff): Color = Color(r: r, g: g, b: b, a: a)
 
 proc drawPoint*(game: Game, pos: Vector2d, color: Color) =
