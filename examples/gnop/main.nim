@@ -1,7 +1,7 @@
 import ../../lib/frag
 import basic2d
 import sdl2/sdl
-import ./cfg.nims
+import ./settings.nims
 
 type Game = ref object of frag.Game
 
@@ -28,4 +28,4 @@ method render(this: Game) =
   frag.draw.fillRect(this, addr(rect1), p1.color)
   frag.draw.fillRect(this, addr(rect2), p2.color)
 
-frag.run[Game](cfg.config)
+frag.run[Game](cfg)

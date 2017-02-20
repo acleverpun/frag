@@ -1,7 +1,7 @@
 from sdl2/sdl import RendererAccelerated, RendererPresentVsync
-import ../../lib/frag/game
+import ../../lib/frag/config
 
-var config*: Config = (
+var cfg* = Config(
   title: "FRAG",
   width: 640,
   height: 480,
