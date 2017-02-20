@@ -18,10 +18,8 @@ proc setupSdl(this: Game, cfg: Config): bool =
 
   this.window = sdl.createWindow(
     cfg.title,
-    # cfg.pos.x or sdl.WindowPosUndefined,
-    # cfg.pos.y or sdl.WindowPosUndefined,
-    sdl.WindowPosUndefined,
-    sdl.WindowPosUndefined,
+    min(cfg.pos.x, sdl.WindowPosUndefined),
+    min(cfg.pos.y, sdl.WindowPosUndefined),
     cfg.width,
     cfg.height,
     uint32(cfg.windowFlags)
