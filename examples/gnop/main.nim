@@ -15,8 +15,8 @@ proc getBounds(this: Player): Rect = Rect(x: this.pos.x.cint, y: this.pos.y.cint
 var p1, p2: Player
 var rect1, rect2: Rect
 method init(this: Game) =
-  p1 = Player(width: 16, height: 100, color: color(0xff, 0xff, 0xff), pos: vector2d(20, 20))
-  p2 = Player(width: 16, height: 100, color: color(0xff, 0xff, 0xff), pos: vector2d(400, 140))
+  p1 = Player(width: 16, height: 100, color: "white", pos: vector2d(20, 20))
+  p2 = Player(width: 16, height: 100, color: "white", pos: vector2d(400, 140))
   rect1 = p1.getBounds()
   rect2 = p2.getBounds()
 
