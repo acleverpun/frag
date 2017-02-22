@@ -22,7 +22,7 @@ method init(this: Game) =
 method update(this: Game) =
   frag.input.update(this)
 
-  if frag.input.down("q"): this.quit()
+  if frag.input.pressed("q"): this.quit()
 
   if frag.input.down("k"): p1.pos.y -= 4
   if frag.input.down("j"): p1.pos.y += 4
