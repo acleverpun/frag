@@ -1,13 +1,18 @@
 import sdl2/sdl
-import config
+import config, draw, module
 
 type Game* = ref object of RootObj
+  modules: seq[Module]
   window*: sdl.Window
   renderer*: sdl.Renderer
 
-method init*(this: Game) {.base.} = discard
-method update*(this: Game) {.base.} = discard
-method render*(this: Game) {.base.} = discard
+proc addModule(this: Game, module: Module) =
+  this.modules.add(module)
+
+method init(this: Game) {.base.} = discard
+method deinit(this: Game) {.base.} = discard
+method update(this: Game) {.base.} = discard
+method render(this: Game) {.base.} = discard
 
 type SdlEx = object of Exception
 template sdlFailIf(cond: typed, err: string) =
@@ -34,6 +39,9 @@ proc setupSdl(this: Game, cfg: Config): bool =
   return true
 
 proc start*(this: Game) =
+  this.addModule(draw)
+  echo repr this.modules
+
   while true:
     this.update()
 
@@ -47,6 +55,7 @@ proc stop*(this: Game) =
   discard
 
 proc quit*(this: Game) =
+  this.deinit()
   this.renderer.destroyRenderer()
   this.window.destroyWindow()
   sdl.quit()
