@@ -1,9 +1,10 @@
 import sdl2/sdl
-import config, draw, module
+import config, draw, input, module
 
 type Game* = ref object of RootObj
   config*: Config
   draw*: Draw
+  input*: Input
   modules*: seq[Module]
 
 method init(this: Game) {.base.} = discard
@@ -16,7 +17,9 @@ proc addModule(this: Game, module: Module): void =
 
 proc start*(this: Game) =
   this.draw = Draw(config: this.config)
-  addModule(this, this.draw)
+  this.addModule(this.draw)
+  this.input = Input()
+  this.addModule(this.input)
 
   for module in this.modules: module.init()
 
