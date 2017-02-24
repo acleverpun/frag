@@ -12,16 +12,14 @@ type SdlEx = object of Exception
 template sdlFailIf(cond: typed, err: string) =
   if cond: raise SdlEx.newException(err & ", [SDL] error: " & $sdl.getError())
 
-method init(this: Draw) =
-  discard
+method init(this: Draw) = discard
 
 method update(this: Draw) =
   sdlFailIf this.renderer.setRenderDrawColor(0x00, 0x00, 0x00, 0xff) != 0: "Failed to set draw color"
   sdlFailIf this.renderer.renderClear() != 0: "Failed to clear screen"
-  this.renderer.renderPresent()
 
 method render(this: Draw) =
-  echo "render"
+  this.renderer.renderPresent()
 
 method deinit(this: Draw) =
   this.renderer.destroyRenderer()
@@ -37,3 +35,5 @@ proc drawRect*(this: Draw, rect: ptr Rect, color: Color) =
 proc fillRect*(this: Draw, rect: ptr Rect, color: Color) =
   discard this.renderer.setRenderDrawColor(color)
   discard this.renderer.renderFillRect(rect)
+
+converter toDraw*(val: Module): Draw = cast[Draw](val)

@@ -36,7 +36,7 @@ var rect1, rect2: Rect
 method render(this: Game) =
   rect1 = p1.getBounds()
   rect2 = p2.getBounds()
-  # this.draw.fillRect(addr(rect1), p1.color)
-  # this.draw.fillRect(addr(rect2), p2.color)
+  this.modules[0].fillRect(addr(rect1), p1.color)
+  this.modules[0].fillRect(addr(rect2), p2.color)
 
 frag.run[Game](settings.cfg)

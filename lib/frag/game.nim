@@ -6,10 +6,6 @@ type Game* = ref object of RootObj
   renderer*: sdl.Renderer
   window: sdl.Window
 
-proc addModule*(this: Game, module: Module): void =
-  # var module: Module = Module()
-  this.modules.add(module)
-
 method init(this: Game) {.base.} = discard
 method deinit(this: Game) {.base.} = discard
 method update(this: Game) {.base.} = discard
@@ -33,10 +29,12 @@ proc setupSdl(this: Game, cfg: Config) =
   sdlFailIf this.window == nil: "Failed to create window"
 
   this.renderer = sdl.createRenderer(this.window, -1, sdl.RendererAccelerated or sdl.RendererPresentVsync)
-  echo "init"
   sdlFailIf this.renderer == nil: "Failed to create renderer"
 
   discard this.renderer.setRenderDrawBlendMode(sdl.BlendModeBlend)
+
+proc addModule*(this: Game, module: Module): void =
+  this.modules.add(module)
 
 proc start*(this: Game) =
   for module in this.modules: module.init()
@@ -45,6 +43,7 @@ proc start*(this: Game) =
     this.update()
     for module in this.modules: module.update()
     this.render()
+    for module in this.modules: module.render()
 
 proc stop*(this: Game) =
   discard
