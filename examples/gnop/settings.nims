@@ -5,6 +5,5 @@ var cfg* = Config(
   title: "FRAG",
   width: 640,
   height: 480,
-  windowFlags: 0,
-  rendererFlags: sdl.RendererAccelerated or sdl.RendererPresentVsync
+  windowFlags: 0
 )

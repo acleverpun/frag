@@ -1,33 +1,39 @@
 from colors import nil
 import basic2d
-import draw/color, game, module
+import draw/color, module, config
 import sdl2/sdl except Color
 
 export color
 
-var window: sdl.Window
-var renderer: sdl.Renderer
+type Draw* = ref object of Module
+  renderer*: sdl.Renderer
 
-proc init*(game: Game) =
-  echo "init"
+type SdlEx = object of Exception
+template sdlFailIf(cond: typed, err: string) =
+  if cond: raise SdlEx.newException(err & ", [SDL] error: " & $sdl.getError())
 
-proc deinit*(game: Game) =
-  echo "deinit"
+method init(this: Draw) =
+  discard
 
-proc update*(game: Game) =
-  echo "update"
+method update(this: Draw) =
+  sdlFailIf this.renderer.setRenderDrawColor(0x00, 0x00, 0x00, 0xff) != 0: "Failed to set draw color"
+  sdlFailIf this.renderer.renderClear() != 0: "Failed to clear screen"
+  this.renderer.renderPresent()
 
-proc render*(game: Game) =
+method render(this: Draw) =
   echo "render"
 
-proc drawPoint*(game: Game, pos: Vector2d, color: Color) =
-  discard game.renderer.setRenderDrawColor(color)
-  discard game.renderer.renderDrawPoint(pos.x.int, pos.y.int)
+method deinit(this: Draw) =
+  this.renderer.destroyRenderer()
 
-proc drawRect*(game: Game, rect: ptr Rect, color: Color) =
-  discard game.renderer.setRenderDrawColor(color)
-  discard game.renderer.renderDrawRect(rect)
+proc drawPoint*(this: Draw, pos: Vector2d, color: Color) =
+  discard this.renderer.setRenderDrawColor(color)
+  discard this.renderer.renderDrawPoint(pos.x.int, pos.y.int)
 
-proc fillRect*(game: Game, rect: ptr Rect, color: Color) =
-  discard game.renderer.setRenderDrawColor(color)
-  discard game.renderer.renderFillRect(rect)
+proc drawRect*(this: Draw, rect: ptr Rect, color: Color) =
+  discard this.renderer.setRenderDrawColor(color)
+  discard this.renderer.renderDrawRect(rect)
+
+proc fillRect*(this: Draw, rect: ptr Rect, color: Color) =
+  discard this.renderer.setRenderDrawColor(color)
+  discard this.renderer.renderFillRect(rect)

@@ -1,12 +1,13 @@
 import sdl2/sdl
-import config, draw, module
+import config, module
 
 type Game* = ref object of RootObj
-  modules: seq[Module]
-  window*: sdl.Window
+  modules*: seq[Module]
   renderer*: sdl.Renderer
+  window: sdl.Window
 
-proc addModule(this: Game, module: Module) =
+proc addModule*(this: Game, module: Module): void =
+  # var module: Module = Module()
   this.modules.add(module)
 
 method init(this: Game) {.base.} = discard
@@ -18,7 +19,7 @@ type SdlEx = object of Exception
 template sdlFailIf(cond: typed, err: string) =
   if cond: raise SdlEx.newException(err & ", [SDL] error: " & $sdl.getError())
 
-proc setupSdl(this: Game, cfg: Config): bool =
+proc setupSdl(this: Game, cfg: Config) =
   sdlFailIf sdl.init(sdl.InitVideo) != 0: "Failed to initialize SDL"
 
   this.window = sdl.createWindow(
@@ -31,39 +32,32 @@ proc setupSdl(this: Game, cfg: Config): bool =
   )
   sdlFailIf this.window == nil: "Failed to create window"
 
-  this.renderer = sdl.createRenderer(this.window, -1, uint32(cfg.rendererFlags))
+  this.renderer = sdl.createRenderer(this.window, -1, sdl.RendererAccelerated or sdl.RendererPresentVsync)
+  echo "init"
   sdlFailIf this.renderer == nil: "Failed to create renderer"
 
   discard this.renderer.setRenderDrawBlendMode(sdl.BlendModeBlend)
 
-  return true
-
 proc start*(this: Game) =
-  this.addModule(draw)
-  echo repr this.modules
+  for module in this.modules: module.init()
 
   while true:
     this.update()
-
-    sdlFailIf this.renderer.setRenderDrawColor(0x00, 0x00, 0x00, 0xff) != 0: "Failed to set draw color"
-    sdlFailIf this.renderer.renderClear() != 0: "Failed to clear screen"
-
+    for module in this.modules: module.update()
     this.render()
-    this.renderer.renderPresent()
 
 proc stop*(this: Game) =
   discard
 
 proc quit*(this: Game) =
   this.deinit()
-  this.renderer.destroyRenderer()
   this.window.destroyWindow()
   sdl.quit()
   system.quit()
 
 proc run*(this: Game, cfg: Config) =
-  if this.setupSdl(cfg):
-    this.init()
-    this.start()
+  this.setupSdl(cfg)
+  this.init()
+  this.start()
 
   this.quit()
