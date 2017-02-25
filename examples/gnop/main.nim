@@ -1,7 +1,6 @@
 import ../../lib/frag
 import ./settings.nims
 import basic2d
-import sdl2/sdl
 
 type
   Game = ref object of frag.Game
@@ -28,6 +27,7 @@ method update(this: Game) =
 
 var rect1, rect2: Rect
 method render(this: Game) =
+  this.draw.drawText("GNOP", Point2d(x: 300, y: 20), "red")
   rect1 = p1.getBounds()
   rect2 = p2.getBounds()
   this.draw.fillRect(addr(rect1), p1.color)

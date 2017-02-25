@@ -1,7 +1,8 @@
 from colors import nil
-import basic2d
 import ../config, ../types/color, module
+import basic2d
 import sdl2/sdl except Color
+import sdl2/sdl_gfx_primitives as gfx, sdl2/sdl_gfx_primitives_font as font
 
 export color
 
@@ -34,6 +35,7 @@ proc setupSdl(this: Draw) =
 
 method init(this: Draw) =
   this.setupSdl()
+  gfx.gfxPrimitivesSetFont(addr(font.gfxPrimitivesFontData), 8, 8)
 
 method update(this: Draw) =
   sdlFailIf this.renderer.setRenderDrawColor(0x00, 0x00, 0x00, 0xff) != 0: "Failed to set draw color"
@@ -57,3 +59,6 @@ proc drawRect*(this: Draw, rect: ptr Rect, color: Color) =
 proc fillRect*(this: Draw, rect: ptr Rect, color: Color) =
   discard this.renderer.setRenderDrawColor(color)
   discard this.renderer.renderFillRect(rect)
+
+proc drawText*(this: Draw, text: string, point: Point2d, color: Color) =
+  discard this.renderer.stringRGBA(point.x.int16, point.y.int16, text, color.r, color.g, color.b, color.a)
