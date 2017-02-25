@@ -1,3 +1,4 @@
+import ../ev
 import module
 import sdl2/sdl
 
@@ -20,8 +21,7 @@ method update(this: Input) =
     case e.kind:
       of sdl.KeyDown: pressedKeys.add(e.key.keysym.sym)
       of sdl.KeyUp: releasedKeys.add(e.key.keysym.sym)
-      # of sdl.Quit: game.quit()
-      of sdl.Quit: echo "quit"
+      of sdl.Quit: emitter.emit("quit", EventArgs())
       else: discard
 
   kbd = sdl.getKeyboardState(nil)

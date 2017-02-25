@@ -1,6 +1,6 @@
-import sdl2/sdl
-import config
+import config, ev
 import modules/draw, modules/input, modules/module
+import sdl2/sdl
 
 type Game* = ref object of RootObj
   config*: Config
@@ -16,11 +16,18 @@ method render(this: Game) {.base.} = discard
 proc addModule(this: Game, module: Module): void =
   this.modules.add(module)
 
+proc quit*(this: Game) =
+  this.deinit()
+  sdl.quit()
+  system.quit()
+
 proc start*(this: Game) =
   this.draw = Draw(config: this.config)
   this.addModule(this.draw)
   this.input = Input()
   this.addModule(this.input)
+
+  emitter.on("quit", proc (args: EventArgs) = this.quit())
 
   for module in this.modules: module.init()
 
@@ -32,11 +39,6 @@ proc start*(this: Game) =
 
 proc stop*(this: Game) =
   discard
-
-proc quit*(this: Game) =
-  this.deinit()
-  sdl.quit()
-  system.quit()
 
 proc run*(this: Game) =
   this.init()
