@@ -1,5 +1,6 @@
 import sdl2/sdl
-import config, draw, input, module
+import config
+import modules/draw, modules/input, modules/module
 
 type Game* = ref object of RootObj
   config*: Config

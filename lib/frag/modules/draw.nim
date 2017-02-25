@@ -1,6 +1,6 @@
 from colors import nil
 import basic2d
-import draw/color, module, config
+import ../config, ../types/color, module
 import sdl2/sdl except Color
 
 export color
