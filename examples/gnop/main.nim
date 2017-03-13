@@ -7,14 +7,18 @@ type
   Player = ref object
     width, height: float
     color: Color
-    pos: Vector2d
+    pos: Point2d
+  Ball = ref object
+    radius: float
+    color: Color
+    pos: Point2d
 
 proc getBounds(this: Player): Rect = Rect(x: this.pos.x.cint, y: this.pos.y.cint, w: this.width.cint, h: this.height.cint)
 
 var p1, p2: Player
 method init(this: Game) =
-  p1 = Player(width: 16, height: 100, color: "white", pos: vector2d(20, 20))
-  p2 = Player(width: 16, height: 100, color: "white", pos: vector2d(400, 140))
+  p1 = Player(width: 16, height: 100, color: "white", pos: point2d(20, 20))
+  p2 = Player(width: 16, height: 100, color: "white", pos: point2d(400, 140))
 
 method update(this: Game) =
   if this.input.pressed("q"): this.quit()
